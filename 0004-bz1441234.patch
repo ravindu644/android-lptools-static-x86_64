@@ -1,0 +1,43 @@
+diff -ur a/libcrypto_utils/android_pubkey.c b/libcrypto_utils/android_pubkey.c
+--- a/libcrypto_utils/android_pubkey.c	2017-03-10 22:03:56.000000000 +0100
++++ b/libcrypto_utils/android_pubkey.c	2017-04-25 23:18:26.078818754 +0200
+@@ -126,31 +126,35 @@
+   BIGNUM* r32 = BN_new();
+   BIGNUM* n0inv = BN_new();
+   BIGNUM* rr = BN_new();
++  const BIGNUM *n;
++  const BIGNUM *e;
+ 
+   if (sizeof(RSAPublicKey) > size ||
+       RSA_size(key) != ANDROID_PUBKEY_MODULUS_SIZE) {
+     goto cleanup;
+   }
+ 
++  RSA_get0_key(key, &n, &e, NULL);
++
+   // Store the modulus size.
+   key_struct->modulus_size_words = ANDROID_PUBKEY_MODULUS_SIZE_WORDS;
+ 
+   // Compute and store n0inv = -1 / N[0] mod 2^32.
+-  if (!ctx || !r32 || !n0inv || !BN_set_bit(r32, 32) ||
+-      !BN_mod(n0inv, key->n, r32, ctx) ||
++  if (!ctx || !r32 || !n0inv || !n || !e || !BN_set_bit(r32, 32) ||
++      !BN_mod(n0inv, n, r32, ctx) ||
+       !BN_mod_inverse(n0inv, n0inv, r32, ctx) || !BN_sub(n0inv, r32, n0inv)) {
+     goto cleanup;
+   }
+   key_struct->n0inv = (uint32_t)BN_get_word(n0inv);
+ 
+   // Store the modulus.
+-  if (!android_pubkey_encode_bignum(key->n, key_struct->modulus)) {
++  if (!android_pubkey_encode_bignum(n, key_struct->modulus)) {
+     goto cleanup;
+   }
+ 
+   // Compute and store rr = (2^(rsa_size)) ^ 2 mod N.
+   if (!ctx || !rr || !BN_set_bit(rr, ANDROID_PUBKEY_MODULUS_SIZE * 8) ||
+-      !BN_mod_sqr(rr, rr, key->n, ctx) ||
++      !BN_mod_sqr(rr, rr, n, ctx) ||
+       !android_pubkey_encode_bignum(rr, key_struct->rr)) {
+     goto cleanup;
+   }

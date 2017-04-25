@@ -14,7 +14,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -44,6 +44,7 @@ Source6:       adb.service
 Patch1:        0001-Add-string-h.patch
 Patch2:        0002-libusb-modifications.patch
 Patch3:        0003-atomic-fix.patch
+Patch4:        0004-bz1441234.patch
 
 Requires(post): systemd
 Requires(preun): systemd
@@ -96,6 +97,7 @@ setup between the host and the target phone as adb.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 cp -p %{SOURCE5} 51-android.rules
 
@@ -132,6 +134,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Tue Apr 25 2017 Jan Pokorný <jpokorny@fedoraproject.org> - 20170311gite7195be7725a-2
+- Resolves: rhbz 1441234 Fix adb crash when generating a key (OpenSSL 1.1.0 API)
+
 * Sat Mar 11 2017 Ivan Afonichev <ivan.afonichev@gmail.com> - 20170311gite7195be7725a-1
 - Update to upstream git commit e7195be7725a
 - Resolves: rhbz 1323632 1423219 Add optflags. Support new versions.
@@ -139,7 +144,7 @@ install -p -D -m 0644 %{SOURCE6} \
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 20160327git3761365735de-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
-* Sun Apr 08 2016 Bastien Nocera <hadess@hadess.net> - 20160327git3761365735de-2
+* Sun May 08 2016 Bastien Nocera <hadess@hadess.net> - 20160327git3761365735de-2
 - Add missing BuildRequires for Ruby script to run
 - Compile and build img2simg and simg2img
 
