@@ -1,7 +1,8 @@
-diff -ur a/libcrypto_utils/android_pubkey.c b/libcrypto_utils/android_pubkey.c
---- a/libcrypto_utils/android_pubkey.c	2017-03-10 22:03:56.000000000 +0100
-+++ b/libcrypto_utils/android_pubkey.c	2017-04-25 23:18:26.078818754 +0200
-@@ -126,31 +126,35 @@
+diff --git a/libcrypto_utils/android_pubkey.c b/libcrypto_utils/android_pubkey.c
+index 3052e52..7061db9 100644
+--- a/libcrypto_utils/android_pubkey.c
++++ b/libcrypto_utils/android_pubkey.c
+@@ -126,37 +126,41 @@ bool android_pubkey_encode(const RSA* key, uint8_t* key_buffer, size_t size) {
    BIGNUM* r32 = BN_new();
    BIGNUM* n0inv = BN_new();
    BIGNUM* rr = BN_new();
@@ -41,3 +42,10 @@ diff -ur a/libcrypto_utils/android_pubkey.c b/libcrypto_utils/android_pubkey.c
        !android_pubkey_encode_bignum(rr, key_struct->rr)) {
      goto cleanup;
    }
+ 
+   // Store the exponent.
+-  key_struct->exponent = (uint32_t)BN_get_word(key->e);
++  key_struct->exponent = (uint32_t)BN_get_word(e);
+ 
+   ret = true;
+ 
