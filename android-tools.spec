@@ -14,7 +14,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       2%{?dist}
+Release:       3%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -134,6 +134,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 20170311gite7195be7725a-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Tue Apr 25 2017 Jan Pokorný <jpokorny@fedoraproject.org> - 20170311gite7195be7725a-2
 - Resolves: rhbz 1441234 Fix adb crash when generating a key (OpenSSL 1.1.0 API)
 
