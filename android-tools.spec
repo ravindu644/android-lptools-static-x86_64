@@ -62,7 +62,7 @@ Provides:      adb
 Provides:      fastboot
 
 # Bundled boringssl doesn't support the big endian architectures rhbz 1431379
-ExcludeArch: ppc ppc64
+ExcludeArch: ppc ppc64 s390x
 
 # Bundled bits
 Provides: bundled(mdnsresponder)
