@@ -14,7 +14,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       4%{?dist}
+Release:       5%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -56,7 +56,7 @@ BuildRequires: f2fs-tools-devel
 BuildRequires: gtest-devel
 BuildRequires: libusbx-devel
 BuildRequires: systemd
-BuildRequires: ruby rubypick rubygems
+BuildRequires: ruby rubygems
 
 Provides:      adb
 Provides:      fastboot
@@ -134,6 +134,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Thu Oct 26 2017 Vít Ondruch <vondruch@redhat.com> - 20170311gite7195be7725a-5
+- Drop the explicit dependnecy on rubypick.
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 20170311gite7195be7725a-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
