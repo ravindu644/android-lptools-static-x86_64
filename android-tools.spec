@@ -14,7 +14,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       5%{?dist}
+Release:       6%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -134,6 +134,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 20170311gite7195be7725a-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Thu Oct 26 2017 Vít Ondruch <vondruch@redhat.com> - 20170311gite7195be7725a-5
 - Drop the explicit dependnecy on rubypick.
 
