@@ -14,7 +14,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       6%{?dist}
+Release:       7%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -45,6 +45,9 @@ Patch1:        0001-Add-string-h.patch
 Patch2:        0002-libusb-modifications.patch
 Patch3:        0003-atomic-fix.patch
 Patch4:        0004-bz1441234.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1470740
+Patch5:        0001-adb-don-t-reset-usb-when-connecting-it.patch
+Patch6:        0001-adb-fix-two-device-offline-problems.patch
 
 Requires(post): systemd
 Requires(preun): systemd
@@ -98,6 +101,8 @@ setup between the host and the target phone as adb.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 cp -p %{SOURCE5} 51-android.rules
 
@@ -134,6 +139,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Tue Feb 27 2018 Bastien Nocera <bnocera@redhat.com> - 20170311gite7195be7725a-7
+- Fix USB resets when adb daemon is started (#1470740)
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 20170311gite7195be7725a-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
