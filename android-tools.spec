@@ -14,7 +14,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       7%{?dist}
+Release:       8%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -139,6 +139,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 20170311gite7195be7725a-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Tue Feb 27 2018 Bastien Nocera <bnocera@redhat.com> - 20170311gite7195be7725a-7
 - Fix USB resets when adb daemon is started (#1470740)
 
