@@ -52,6 +52,7 @@ Patch6:        0001-adb-fix-two-device-offline-problems.patch
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
+BuildRequires:  gcc-c++
 BuildRequires: zlib-devel
 BuildRequires: openssl-devel
 BuildRequires: libselinux-devel
