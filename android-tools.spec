@@ -1,12 +1,10 @@
-%global date 20170311
-%global git_commit e7195be7725a
+%global date 20180828
+%global git_commit c7815d675
 
 %global packdname core-%{git_commit}
-%global extras_git_commit 61f6603
-%global extras_packdname extras-%{extras_git_commit}
-%global boring_git_commit 7d422bc
+%global boring_git_commit fb44824b9
 %global boring_packdname boringssl-%{boring_git_commit}
-%global mdns_git_commit ca0cba5
+%global mdns_git_commit 33e620a7
 %global mdns_packdname mdnsresponder-%{mdns_git_commit}
 
 
@@ -14,19 +12,17 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       8%{?dist}
+Release:       1%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
-# The entire source code is ASL 2.0 except fastboot/ which is BSD
+# The entire source code is ASL 2.0 except boringssl which is BSD
 License:       ASL 2.0 and (ASL 2.0 and BSD)
 URL:           http://developer.android.com/guide/developing/tools/
 
 #  using git archive since upstream hasn't created tarballs. 
-#  git archive --format=tar --prefix=%%{packdname}/ %%{git_commit} adb base fastboot libcrypto_utils libcutils liblog libsparse libutils libziparchive mkbootimg include | xz  > %%{packdname}.tar.xz
+#  git archive --format=tar --prefix=core/ %%{git_commit} adb base diagnose_usb fastboot libcrypto_utils libcutils liblog libsparse libsystem libutils libziparchive mkbootimg include | xz  > %%{packdname}.tar.xz
 #  https://android.googlesource.com/platform/system/core.git
-#  git archive --format=tar --prefix=extras/ %%{extras_git_commit} ext4_utils f2fs_utils | xz  > %%{extras_packdname}.tar.xz
-#  https://android.googlesource.com/platform/system/extras.git
 #  git archive --format=tar --prefix=boringssl/ %%{boring_git_commit} src/crypto include src/include | xz  > %%{boring_packdname}.tar.xz
 #  https://android.googlesource.com/platform/external/boringssl
 #  git archive --format=tar --prefix=mdnsresponder/ %%{mdns_git_commit} mDNSShared | xz  > %%{mdns_packdname}.tar.xz
@@ -35,7 +31,6 @@ URL:           http://developer.android.com/guide/developing/tools/
 
 
 Source0:       %{packdname}.tar.xz
-Source1:       %{extras_packdname}.tar.xz
 Source2:       generate_build.rb
 Source3:       %{boring_packdname}.tar.xz
 Source4:       %{mdns_packdname}.tar.xz
@@ -43,20 +38,18 @@ Source5:       51-android.rules
 Source6:       adb.service
 Patch1:        0001-Add-string-h.patch
 Patch2:        0002-libusb-modifications.patch
-Patch3:        0003-atomic-fix.patch
+Patch3:        0003-buildlib-remove.patch
 Patch4:        0004-bz1441234.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1470740
-Patch5:        0001-adb-don-t-reset-usb-when-connecting-it.patch
-Patch6:        0001-adb-fix-two-device-offline-problems.patch
 
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
-BuildRequires:  gcc-c++
+BuildRequires: clang
+BuildRequires: ninja-build
 BuildRequires: zlib-devel
 BuildRequires: openssl-devel
 BuildRequires: libselinux-devel
-BuildRequires: f2fs-tools-devel
 BuildRequires: gtest-devel
 BuildRequires: libusbx-devel
 BuildRequires: systemd
@@ -94,27 +87,31 @@ to read and write the flash partitions. It needs the same USB device
 setup between the host and the target phone as adb.
 
 %prep
-%setup -q -b 1 -n extras
 %setup -q -b 3 -n boringssl
 %setup -q -b 4 -n mdnsresponder
-%setup -q -b 0 -n %{packdname}
+%setup -q -b 0 -n core
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 cp -p %{SOURCE5} 51-android.rules
+export CC="clang"
+export CXX="clang++"
+sed -i 's/android::build::GetBuildNumber().c_str()/"%{git_commit}"/g' adb/adb.cpp 
+
+%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g')
 
 %build
-ruby %{SOURCE2} | tee build.sh
-PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe build.sh
+cd ..
+PKGVER=%{git_commit} CXXFLAGS="%{optflags} -Qunused-arguments" CFLAGS="%{optflags} -Qunused-arguments" ruby %{SOURCE2} > build.ninja
+%ninja_build
 
 %install
+cd ../
 install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
 install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
-install -m 0755 -t ${RPM_BUILD_ROOT}%{_bindir} adb/adb fastboot/fastboot libsparse/simg2img libsparse/img2simg
+install -m 0755 -t ${RPM_BUILD_ROOT}%{_bindir} adb fastboot simg2img img2simg
 install -p -D -m 0644 %{SOURCE6} \
     %{buildroot}%{_unitdir}/adb.service
 
@@ -131,15 +128,19 @@ install -p -D -m 0644 %{SOURCE6} \
 %doc adb/OVERVIEW.TXT adb/SERVICES.TXT adb/NOTICE adb/protocol.txt 51-android.rules
 %{_unitdir}/adb.service
 %attr(0755,root,root) %dir %{_sharedstatedir}/adb
-#ASL2.0
+#ASL2.0 and BSD
 %{_bindir}/adb
+#ASL2.0
 %{_bindir}/simg2img
 %{_bindir}/img2simg
-#ASL2.0 and BSD.
 %{_bindir}/fastboot
 
 
 %changelog
+* Wed Aug 29 2018 Ivan Afonichev <ivan.afonichev@gmail.com> - 20180828gitc7815d675-1
+- Update to upstream git commit c7815d675
+- Resolves: rhbz 1535542 1550703 1603379 Switch to clang and ninja
+
 * Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 20170311gite7195be7725a-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 

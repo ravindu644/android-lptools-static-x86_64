@@ -1,5 +1,29 @@
+diff --git a/adb/sysdeps/posix/network.cpp b/adb/sysdeps/posix/network.cpp
+index ecd1fd24e..07fd8c98e 100644
+--- a/adb/sysdeps/posix/network.cpp
++++ b/adb/sysdeps/posix/network.cpp
+@@ -19,6 +19,7 @@
+ #include <errno.h>
+ #include <netinet/in.h>
+ #include <sys/socket.h>
++#include <string.h>
+ 
+ #include <string>
+ 
+diff --git a/adb/types.h b/adb/types.h
+index a3e5d4842..bac7181b4 100644
+--- a/adb/types.h
++++ b/adb/types.h
+@@ -22,6 +22,7 @@
+ #include <type_traits>
+ #include <utility>
+ #include <vector>
++#include <string.h>
+ 
+ #include <android-base/logging.h>
+ 
 diff --git a/base/errors_unix.cpp b/base/errors_unix.cpp
-index 296995e..48269b6 100644
+index 296995efe..48269b675 100644
 --- a/base/errors_unix.cpp
 +++ b/base/errors_unix.cpp
 @@ -17,6 +17,7 @@
@@ -11,7 +35,7 @@ index 296995e..48269b6 100644
  namespace android {
  namespace base {
 diff --git a/base/file.cpp b/base/file.cpp
-index 81b04d7..2fd2b6e 100644
+index d6fe753d1..3b10544dd 100644
 --- a/base/file.cpp
 +++ b/base/file.cpp
 @@ -22,6 +22,7 @@
@@ -22,15 +46,3 @@ index 81b04d7..2fd2b6e 100644
  
  #include <memory>
  #include <mutex>
-diff --git a/base/logging.cpp b/base/logging.cpp
-index 6357b4b..3c7dbce 100644
---- a/base/logging.cpp
-+++ b/base/logging.cpp
-@@ -23,6 +23,7 @@
- #include <fcntl.h>
- #include <libgen.h>
- #include <time.h>
-+#include <string.h>
- 
- // For getprogname(3) or program_invocation_short_name.
- #if defined(__ANDROID__) || defined(__APPLE__)

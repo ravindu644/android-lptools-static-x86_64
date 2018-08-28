@@ -1,0 +1,12 @@
+diff --git a/adb/adb.cpp b/adb/adb.cpp
+index 38c6f62c9..9df41a236 100644
+--- a/adb/adb.cpp
++++ b/adb/adb.cpp
+@@ -44,7 +44,6 @@
+ #include <android-base/parsenetaddress.h>
+ #include <android-base/stringprintf.h>
+ #include <android-base/strings.h>
+-#include <build/version.h>
+ 
+ #include "adb_auth.h"
+ #include "adb_io.h"
