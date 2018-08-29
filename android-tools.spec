@@ -40,7 +40,9 @@ Patch1:        0001-Add-string-h.patch
 Patch2:        0002-libusb-modifications.patch
 Patch3:        0003-buildlib-remove.patch
 Patch4:        0004-bz1441234.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1470740
+# https://android-review.googlesource.com/c/platform/system/core/+/740625
+Patch5:        0005-Add-sysmacros-h.patch
+
 
 Requires(post): systemd
 Requires(preun): systemd
@@ -94,6 +96,7 @@ setup between the host and the target phone as adb.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 cp -p %{SOURCE5} 51-android.rules
 export CC="clang"
