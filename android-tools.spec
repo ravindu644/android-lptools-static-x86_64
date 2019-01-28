@@ -15,7 +15,6 @@ Version:       %{date}git%{git_commit}
 Release:       1%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
-Group:         Applications/System
 # The entire source code is ASL 2.0 except boringssl which is BSD
 License:       ASL 2.0 and (ASL 2.0 and BSD)
 URL:           http://developer.android.com/guide/developing/tools/
