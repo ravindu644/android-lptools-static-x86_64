@@ -7,12 +7,11 @@
 %global mdns_git_commit 33e620a7
 %global mdns_packdname mdnsresponder-%{mdns_git_commit}
 
-
 %global _hardened_build 1
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       2%{?dist}
+Release:       3%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 # The entire source code is ASL 2.0 except boringssl which is BSD
@@ -26,8 +25,6 @@ URL:           http://developer.android.com/guide/developing/tools/
 #  https://android.googlesource.com/platform/external/boringssl
 #  git archive --format=tar --prefix=mdnsresponder/ %%{mdns_git_commit} mDNSShared | xz  > %%{mdns_packdname}.tar.xz
 #  https://android.googlesource.com/platform/external/mdnsresponder
-
-
 
 Source0:       %{packdname}.tar.xz
 Source2:       generate_build.rb
@@ -47,14 +44,14 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 BuildRequires: clang
-BuildRequires: ninja-build
-BuildRequires: zlib-devel
-BuildRequires: openssl-devel
-BuildRequires: libselinux-devel
 BuildRequires: gtest-devel
+BuildRequires: libselinux-devel
 BuildRequires: libusbx-devel
-BuildRequires: systemd
+BuildRequires: ninja-build
+BuildRequires: openssl-devel
 BuildRequires: ruby rubygems
+BuildRequires: systemd
+BuildRequires: zlib-devel
 
 Provides:      adb
 Provides:      fastboot
@@ -102,7 +99,7 @@ export CC="clang"
 export CXX="clang++"
 sed -i 's/android::build::GetBuildNumber().c_str()/"%{git_commit}"/g' adb/adb.cpp 
 
-%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g')
+%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
 
 %build
 cd ..
@@ -139,6 +136,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Mon May 27 2019 Peter Robinson <pbrobinson@fedoraproject.org> 20180828gitc7815d675-3
+- Fix FTBFS, minor cleanups
+
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 20180828gitc7815d675-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
