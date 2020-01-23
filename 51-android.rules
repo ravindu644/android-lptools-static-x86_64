@@ -8660,3 +8660,6 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="f003", TAG+="systemd", ENV{SYSTEMD_WANTS}="ad
 
 #Atten Electronics / Siglent Technologies 
 SUBSYSTEM=="usb", ATTR{idVendor}=="f4ec", TAG+="systemd", ENV{SYSTEMD_WANTS}="adb.service"
+
+#Oneplus
+SUBSYSTEM=="usb", ATTR{idVendor}=="2a70", TAG+="systemd", ENV{SYSTEMD_WANTS}="adb.service"
