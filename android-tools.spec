@@ -11,7 +11,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       4%{?dist}
+Release:       5%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 # The entire source code is ASL 2.0 except boringssl which is BSD
@@ -136,6 +136,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 20180828gitc7815d675-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 20180828gitc7815d675-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
