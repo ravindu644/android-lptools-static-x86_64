@@ -11,7 +11,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       5%{?dist}
+Release:       6%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 # The entire source code is ASL 2.0 except boringssl which is BSD
@@ -102,6 +102,11 @@ sed -i 's/android::build::GetBuildNumber().c_str()/"%{git_commit}"/g' adb/adb.cp
 %global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
 
 %build
+# This package appears to be failing because links to the LLVM plugins
+# are not installed which results in the tools not being able to
+# interpret the .o/.a files.  Disable LTO for now
+%define _lto_cflags %{nil}
+
 cd ..
 PKGVER=%{git_commit} CXXFLAGS="%{optflags} -Qunused-arguments" CFLAGS="%{optflags} -Qunused-arguments" ruby %{SOURCE2} > build.ninja
 %ninja_build
@@ -136,6 +141,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Sat Jul 11 2020 Jeff Law <law@redhat.com> - 20180828gitc7815d675-6
+- Disable LTO
+
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 20180828gitc7815d675-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
