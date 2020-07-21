@@ -11,7 +11,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       6%{?dist}
+Release:       7%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 # The entire source code is ASL 2.0 except boringssl which is BSD
@@ -99,13 +99,13 @@ export CC="clang"
 export CXX="clang++"
 sed -i 's/android::build::GetBuildNumber().c_str()/"%{git_commit}"/g' adb/adb.cpp 
 
-%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
-
-%build
 # This package appears to be failing because links to the LLVM plugins
 # are not installed which results in the tools not being able to
 # interpret the .o/.a files.  Disable LTO for now
 %define _lto_cflags %{nil}
+%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
+
+%build
 
 cd ..
 PKGVER=%{git_commit} CXXFLAGS="%{optflags} -Qunused-arguments" CFLAGS="%{optflags} -Qunused-arguments" ruby %{SOURCE2} > build.ninja
@@ -141,6 +141,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Mon Jul 20 2020 Jeff Law <law@redhat.com> - 20180828gitc7815d675-7
+- Move LTO disablement so that it impacts the optflags override too
+
 * Sat Jul 11 2020 Jeff Law <law@redhat.com> - 20180828gitc7815d675-6
 - Disable LTO
 
