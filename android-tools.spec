@@ -141,7 +141,7 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
-* Wed Aug 29 2018 Ivan Afonichev <ivan.afonichev@gmail.com> - 20180828gitc7815d675-1
+* Fri Nov 6 2020 Ivan Afonichev <ivan.afonichev@gmail.com> - 20180828gitc7815d675-9
 - Fix plugdev udev rule 
 - Resolves: rhbz 1779855
 
