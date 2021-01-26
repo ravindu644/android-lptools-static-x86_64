@@ -11,7 +11,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       9%{?dist}
+Release:       10%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 # The entire source code is ASL 2.0 except boringssl which is BSD
@@ -141,6 +141,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 20180828gitc7815d675-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Fri Nov 6 2020 Ivan Afonichev <ivan.afonichev@gmail.com> - 20180828gitc7815d675-9
 - Fix plugdev udev rule 
 - Resolves: rhbz 1779855
