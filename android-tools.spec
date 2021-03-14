@@ -1,67 +1,36 @@
-%global date 20180828
-%global git_commit c7815d675
-
-%global packdname core-%{git_commit}
-%global boring_git_commit fb44824b9
-%global boring_packdname boringssl-%{boring_git_commit}
-%global mdns_git_commit 33e620a7
-%global mdns_packdname mdnsresponder-%{mdns_git_commit}
+%global packdname -%{version}
 
 %global _hardened_build 1
 
 Name:          android-tools
-Version:       %{date}git%{git_commit}
-Release:       11%{?dist}
+Version:       30.0.5p1
+Release:       1%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 # The entire source code is ASL 2.0 except boringssl which is BSD
 License:       ASL 2.0 and (ASL 2.0 and BSD)
 URL:           http://developer.android.com/guide/developing/tools/
 
-#  using git archive since upstream hasn't created tarballs. 
-#  git archive --format=tar --prefix=core/ %%{git_commit} adb base diagnose_usb fastboot libcrypto_utils libcutils liblog libsparse libsystem libutils libziparchive mkbootimg include | xz  > %%{packdname}.tar.xz
-#  https://android.googlesource.com/platform/system/core.git
-#  git archive --format=tar --prefix=boringssl/ %%{boring_git_commit} src/crypto include src/include | xz  > %%{boring_packdname}.tar.xz
-#  https://android.googlesource.com/platform/external/boringssl
-#  git archive --format=tar --prefix=mdnsresponder/ %%{mdns_git_commit} mDNSShared | xz  > %%{mdns_packdname}.tar.xz
-#  https://android.googlesource.com/platform/external/mdnsresponder
-
-Source0:       %{packdname}.tar.xz
-Source2:       generate_build.rb
-Source3:       %{boring_packdname}.tar.xz
-Source4:       %{mdns_packdname}.tar.xz
-Source5:       51-android.rules
-Source6:       adb.service
-Patch1:        0001-Add-string-h.patch
-Patch2:        0002-libusb-modifications.patch
-Patch3:        0003-buildlib-remove.patch
-Patch4:        0004-bz1441234.patch
-# https://android-review.googlesource.com/c/platform/system/core/+/740625
-Patch5:        0005-Add-sysmacros-h.patch
+#  Sources with all needed patches and cmakelists live there now: 
+#  
+Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
+Source1:       51-android.rules
+Source2:       adb.service
 
 
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
-BuildRequires: clang
+BuildRequires: cmake
 BuildRequires: gtest-devel
-BuildRequires: libselinux-devel
 BuildRequires: libusbx-devel
-BuildRequires: ninja-build
-BuildRequires: openssl-devel
-BuildRequires: ruby rubygems
 BuildRequires: systemd
-BuildRequires: zlib-devel
 
-Provides:      adb
-Provides:      fastboot
-
-# Bundled boringssl doesn't support the big endian architectures rhbz 1431379
-ExcludeArch: ppc ppc64 s390x
+Provides:      adb = %{epoch}:%{version}-%{release}
+Provides:      fastboot = %{epoch}:%{version}-%{release}
+Provides:      mke2fs.android = %{epoch}:%{version}-%{release}
 
 # Bundled bits
-Provides: bundled(mdnsresponder)
-# This is a fork of openssl.
 Provides: bundled(boringssl)
 
 %description
@@ -85,39 +54,19 @@ to read and write the flash partitions. It needs the same USB device
 setup between the host and the target phone as adb.
 
 %prep
-%setup -q -b 3 -n boringssl
-%setup -q -b 4 -n mdnsresponder
-%setup -q -b 0 -n core
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-
-cp -p %{SOURCE5} 51-android.rules
-export CC="clang"
-export CXX="clang++"
-sed -i 's/android::build::GetBuildNumber().c_str()/"%{git_commit}"/g' adb/adb.cpp 
-
-# This package appears to be failing because links to the LLVM plugins
-# are not installed which results in the tools not being able to
-# interpret the .o/.a files.  Disable LTO for now
-%define _lto_cflags %{nil}
-%global optflags %(echo %{optflags} | sed -e 's/-mcet//g' -e 's/-fcf-protection//g' -e 's/-fstack-clash-protection//g')
+%autosetup
+cp -p %{SOURCE1} 51-android.rules
+ 
 
 %build
-
-cd ..
-PKGVER=%{git_commit} CXXFLAGS="%{optflags} -Qunused-arguments" CFLAGS="%{optflags} -Qunused-arguments" ruby %{SOURCE2} > build.ninja
-%ninja_build
+%cmake -DBUILD_SHARED_LIBS:BOOL=OFF
+%cmake_build
 
 %install
-cd ../
-install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
-install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
-install -m 0755 -t ${RPM_BUILD_ROOT}%{_bindir} adb fastboot simg2img img2simg
-install -p -D -m 0644 %{SOURCE6} \
+%cmake_install
+install -p -D -m 0644 %{SOURCE2} \
     %{buildroot}%{_unitdir}/adb.service
+install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 
 %post
 %systemd_post adb.service
@@ -129,7 +78,7 @@ install -p -D -m 0644 %{SOURCE6} \
 %systemd_postun_with_restart adb.service
 
 %files
-%doc adb/OVERVIEW.TXT adb/SERVICES.TXT adb/NOTICE adb/protocol.txt 51-android.rules
+%doc vendor/core/adb/OVERVIEW.TXT vendor/core/adb/SERVICES.TXT vendor/core/adb/NOTICE vendor/core/adb/protocol.txt 51-android.rules
 %{_unitdir}/adb.service
 %attr(0755,root,root) %dir %{_sharedstatedir}/adb
 #ASL2.0 and BSD
@@ -138,9 +87,16 @@ install -p -D -m 0644 %{SOURCE6} \
 %{_bindir}/simg2img
 %{_bindir}/img2simg
 %{_bindir}/fastboot
+%{_bindir}/append2simg
+%{_bindir}/mke2fs.android
 
 
 %changelog
+* Sun Mar 14 2021 Ivan Afonichev <ivan.afonichev@gmail.com> - 1:30.0.5p1-1
+- Switch to linux-friendly upstream
+- Use Android SDK versions for versioning(Epoch 1 introduced)
+- Resolves: rhbz 1937578 1873878 1923681 1776001
+
 * Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 20180828gitc7815d675-11
 - Rebuilt for updated systemd-rpm-macros
   See https://pagure.io/fesco/issue/2583.
