@@ -5,6 +5,7 @@
 Name:          android-tools
 Version:       30.0.5p1
 Release:       1%{?dist}
+Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
 
 # The entire source code is ASL 2.0 except boringssl which is BSD
@@ -17,13 +18,21 @@ Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{n
 Source1:       51-android.rules
 Source2:       adb.service
 
-
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
+BuildRequires: brotli-devel
 BuildRequires: cmake
+BuildRequires: gcc
+BuildRequires: gcc-c++
+BuildRequires: golang
 BuildRequires: gtest-devel
 BuildRequires: libusbx-devel
+BuildRequires: libzstd-devel
+BuildRequires: lz4-devel
+BuildRequires: pcre2-devel
+BuildRequires: perl
+BuildRequires: protobuf-devel
 BuildRequires: systemd
 
 Provides:      adb = %{epoch}:%{version}-%{release}
@@ -32,6 +41,9 @@ Provides:      mke2fs.android = %{epoch}:%{version}-%{release}
 
 # Bundled bits
 Provides: bundled(boringssl)
+
+# Bundled boringssl doesn't support the big endian architectures rhbz 1431379
+ExcludeArch: ppc ppc64 s390x
 
 %description
 
