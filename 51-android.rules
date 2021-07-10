@@ -8666,3 +8666,6 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="2a70", TAG+="systemd", ENV{SYSTEMD_WANTS}="ad
 
 # Essential Products
 SUBSYSTEM=="usb", ATTR{idVendor}=="2e17", TAG+="systemd", ENV{SYSTEMD_WANTS}="adb.service"
+
+#Nextbit
+SUBSYSTEM=="usb", ATTR{idVendor}=="2c3f", TAG+="systemd", ENV{SYSTEMD_WANTS}="adb.service"
