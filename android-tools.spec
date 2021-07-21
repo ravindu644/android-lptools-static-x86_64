@@ -4,7 +4,7 @@
 
 Name:          android-tools
 Version:       30.0.5p1
-Release:       1%{?dist}
+Release:       2%{?dist}
 Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
 
@@ -104,6 +104,9 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 
 
 %changelog
+* Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:30.0.5p1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Sun Mar 14 2021 Ivan Afonichev <ivan.afonichev@gmail.com> - 1:30.0.5p1-1
 - Switch to linux-friendly upstream
 - Use Android SDK versions for versioning(Epoch 1 introduced)
