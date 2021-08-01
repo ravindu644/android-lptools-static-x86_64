@@ -1,10 +1,8 @@
-%global packdname -%{version}
-
 %global _hardened_build 1
 
 Name:          android-tools
-Version:       30.0.5p1
-Release:       2%{?dist}
+Version:       31.0.2
+Release:       1%{?dist}
 Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
 
@@ -25,15 +23,20 @@ BuildRequires: brotli-devel
 BuildRequires: cmake
 BuildRequires: gcc
 BuildRequires: gcc-c++
-BuildRequires: golang
 BuildRequires: gtest-devel
 BuildRequires: libusbx-devel
+BuildRequires: systemd
+BuildRequires: golang
+BuildRequires:  golang(golang.org/x/crypto/chacha20)
+BuildRequires:  golang(golang.org/x/crypto/chacha20poly1305)
+BuildRequires:  golang(golang.org/x/crypto/curve25519)
+BuildRequires:  golang(golang.org/x/crypto/hkdf)
+BuildRequires:  golang(golang.org/x/crypto/xts)
 BuildRequires: libzstd-devel
 BuildRequires: lz4-devel
 BuildRequires: pcre2-devel
 BuildRequires: perl
 BuildRequires: protobuf-devel
-BuildRequires: systemd
 
 Provides:      adb = %{epoch}:%{version}-%{release}
 Provides:      fastboot = %{epoch}:%{version}-%{release}
@@ -68,9 +71,9 @@ setup between the host and the target phone as adb.
 %prep
 %autosetup
 cp -p %{SOURCE1} 51-android.rules
- 
 
 %build
+export GO111MODULE=off
 %cmake -DBUILD_SHARED_LIBS:BOOL=OFF
 %cmake_build
 
@@ -90,9 +93,10 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 %systemd_postun_with_restart adb.service
 
 %files
-%doc vendor/core/adb/OVERVIEW.TXT vendor/core/adb/SERVICES.TXT vendor/core/adb/NOTICE vendor/core/adb/protocol.txt 51-android.rules
+%doc 51-android.rules
 %{_unitdir}/adb.service
 %attr(0755,root,root) %dir %{_sharedstatedir}/adb
+%attr(0755,root,root) %dir %{_datadir}/android-tools
 #ASL2.0 and BSD
 %{_bindir}/adb
 #ASL2.0
@@ -101,9 +105,20 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 %{_bindir}/fastboot
 %{_bindir}/append2simg
 %{_bindir}/mke2fs.android
+%{_datadir}/android-tools/completions/adb
+%{_datadir}/android-tools/completions/fastboot
+%{_datadir}/bash-completion/completions/adb
+%{_datadir}/bash-completion/completions/fastboot
+
 
 
 %changelog
+* Mon Aug 2 2021 Ivan Afonichev <ivan.afonichev@gmail.com> - 1:31.0.2-1
+- GCC 11 compatibility
+- Add bash complitions
+- Specify golang build dependencies
+- Resolves: rhbz 1923681 1987363 1674645
+
 * Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:30.0.5p1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
