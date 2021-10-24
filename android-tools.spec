@@ -2,7 +2,7 @@
 
 Name:          android-tools
 Version:       31.0.2
-Release:       1%{?dist}
+Release:       2%{?dist}
 Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
 
@@ -113,6 +113,9 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 
 
 %changelog
+* Sun Oct 24 2021 Adrian Reber <adrian@lisas.de> - 1:31.0.2-2
+- Rebuilt for protobuf 3.18.1
+
 * Mon Aug 2 2021 Ivan Afonichev <ivan.afonichev@gmail.com> - 1:31.0.2-1
 - GCC 11 compatibility
 - Add bash complitions
