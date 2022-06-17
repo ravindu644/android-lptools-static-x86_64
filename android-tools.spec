@@ -2,7 +2,7 @@
 
 Name:          android-tools
 Version:       31.0.2
-Release:       4%{?dist}
+Release:       5%{?dist}
 Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
 
@@ -113,6 +113,10 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 
 
 %changelog
+* Fri Jun 17 2022 Robert-André Mauchin <zebob.m@gmail.com> - 1:31.0.2-5
+- Rebuilt for CVE-2022-1996, CVE-2022-24675, CVE-2022-28327, CVE-2022-27191,
+  CVE-2022-29526, CVE-2022-30629
+
 * Wed Jan 19 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1:31.0.2-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
