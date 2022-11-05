@@ -1,7 +1,7 @@
 %global _hardened_build 1
 
 Name:          android-tools
-Version:       31.0.2
+Version:       33.0.3p1
 Release:       %autorelease
 Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
@@ -11,32 +11,32 @@ License:       ASL 2.0 and (ASL 2.0 and BSD)
 URL:           http://developer.android.com/guide/developing/tools/
 
 #  Sources with all needed patches and cmakelists live there now: 
-#  
 Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
 Source1:       51-android.rules
 Source2:       adb.service
+# e2fsdroid doesn't build on ppc64le
+# See https://github.com/tytso/e2fsprogs/issues/127
+Patch0:        Disable-e2fsdroid-for-ppc64le.patch
 
-Requires(post): systemd
-Requires(preun): systemd
-Requires(postun): systemd
 BuildRequires: brotli-devel
 BuildRequires: cmake
 BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: gtest-devel
-BuildRequires: libusbx-devel
-BuildRequires: systemd
 BuildRequires: golang
-BuildRequires:  golang(golang.org/x/crypto/chacha20)
-BuildRequires:  golang(golang.org/x/crypto/chacha20poly1305)
-BuildRequires:  golang(golang.org/x/crypto/curve25519)
-BuildRequires:  golang(golang.org/x/crypto/hkdf)
-BuildRequires:  golang(golang.org/x/crypto/xts)
+BuildRequires: golang(golang.org/x/crypto/chacha20)
+BuildRequires: golang(golang.org/x/crypto/chacha20poly1305)
+BuildRequires: golang(golang.org/x/crypto/curve25519)
+BuildRequires: golang(golang.org/x/crypto/hkdf)
+BuildRequires: golang(golang.org/x/crypto/xts)
+BuildRequires: libusbx-devel
 BuildRequires: libzstd-devel
 BuildRequires: lz4-devel
+BuildRequires: multilib-rpm-config
 BuildRequires: pcre2-devel
 BuildRequires: perl
 BuildRequires: protobuf-devel
+BuildRequires: systemd-rpm-macros
 
 Provides:      adb = %{epoch}:%{version}-%{release}
 Provides:      fastboot = %{epoch}:%{version}-%{release}
@@ -69,7 +69,10 @@ to read and write the flash partitions. It needs the same USB device
 setup between the host and the target phone as adb.
 
 %prep
-%autosetup
+%setup -q
+%ifarch ppc64le
+%patch0 -p1
+%endif
 cp -p %{SOURCE1} 51-android.rules
 
 %build
@@ -100,17 +103,31 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 #ASL2.0 and BSD
 %{_bindir}/adb
 #ASL2.0
+%{_bindir}/avbtool
+%{_bindir}/mke2fs.android
 %{_bindir}/simg2img
 %{_bindir}/img2simg
 %{_bindir}/fastboot
 %{_bindir}/append2simg
-%{_bindir}/mke2fs.android
+%ifnarch ppc64le
+%{_bindir}/e2fsdroid
+%endif
+%{_bindir}/ext2simg
+%{_bindir}/lpadd
+%{_bindir}/lpdump
+%{_bindir}/lpflash
+%{_bindir}/lpmake
+%{_bindir}/lpunpack
+%{_bindir}/mkbootimg
+%{_bindir}/mkdtboimg
+%{_bindir}/repack_bootimg
+%{_bindir}/unpack_bootimg
 %{_datadir}/android-tools/completions/adb
 %{_datadir}/android-tools/completions/fastboot
+%{_datadir}/android-tools/mkbootimg/gki/generate_gki_certificate.py
+%{_datadir}/android-tools/mkbootimg/mkbootimg.py
 %{_datadir}/bash-completion/completions/adb
 %{_datadir}/bash-completion/completions/fastboot
-
-
 
 %changelog
 %autochangelog
