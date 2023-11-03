@@ -1,7 +1,7 @@
 %global _hardened_build 1
 
 Name:          android-tools
-Version:       33.0.3p1
+Version:       34.0.4
 Release:       %autorelease
 Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
