@@ -14,9 +14,6 @@ URL:           http://developer.android.com/guide/developing/tools/
 Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
 Source1:       51-android.rules
 Source2:       adb.service
-# e2fsdroid doesn't build on ppc64le
-# See https://github.com/tytso/e2fsprogs/issues/127
-Patch0:        Disable-e2fsdroid-for-ppc64le.patch
 
 BuildRequires: brotli-devel
 BuildRequires: cmake
@@ -70,9 +67,6 @@ setup between the host and the target phone as adb.
 
 %prep
 %setup -q
-%ifarch ppc64le
-%patch0 -p1
-%endif
 cp -p %{SOURCE1} 51-android.rules
 
 %build
@@ -109,9 +103,7 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 %{_bindir}/img2simg
 %{_bindir}/fastboot
 %{_bindir}/append2simg
-%ifnarch ppc64le
 %{_bindir}/e2fsdroid
-%endif
 %{_bindir}/ext2simg
 %{_bindir}/lpadd
 %{_bindir}/lpdump
