@@ -14,9 +14,6 @@ URL:           http://developer.android.com/guide/developing/tools/
 Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
 Source1:       51-android.rules
 Source2:       adb.service
-# e2fsdroid doesn't build on ppc64le
-# See https://github.com/tytso/e2fsprogs/issues/127
-Patch0:        Disable-e2fsdroid-for-ppc64le.patch
 
 BuildRequires: brotli-devel
 BuildRequires: cmake
@@ -46,7 +43,8 @@ Provides:      mke2fs.android = %{epoch}:%{version}-%{release}
 Provides: bundled(boringssl)
 
 # Bundled boringssl doesn't support the big endian architectures rhbz 1431379
-ExcludeArch: ppc ppc64 s390x
+# And dropped ppc64le support: https://github.com/google/boringssl/commit/7d2338d000eb1468a5bbf78e91854236e18fb9e4
+ExcludeArch: ppc ppc64 s390x ppc64le
 
 %description
 
@@ -70,7 +68,6 @@ setup between the host and the target phone as adb.
 
 %prep
 %setup -q
-%patch0 -p1
 cp -p %{SOURCE1} 51-android.rules
 
 %build
