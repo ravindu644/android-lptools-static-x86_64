@@ -70,9 +70,7 @@ setup between the host and the target phone as adb.
 
 %prep
 %setup -q
-%ifarch ppc64le
 %patch0 -p1
-%endif
 cp -p %{SOURCE1} 51-android.rules
 
 %build
