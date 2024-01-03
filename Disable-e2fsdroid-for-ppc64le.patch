@@ -4,31 +4,31 @@ index 5c0708d..1ac9a8a 100644
 +++ b/vendor/CMakeLists.mke2fs.txt
 @@ -118,6 +118,7 @@ target_link_libraries("${ANDROID_MKE2FS_NAME}"
  target_include_directories("${ANDROID_MKE2FS_NAME}" PRIVATE
-        e2fsprogs/lib)
+ 	e2fsprogs/lib)
  
 +if( NOT CMAKE_SYSTEM_PROCESSOR MATCHES "ppc64le" )
  add_executable(e2fsdroid
-        e2fsprogs/contrib/android/e2fsdroid.c
-        e2fsprogs/contrib/android/basefs_allocator.c
+ 	e2fsprogs/contrib/android/e2fsdroid.c
+ 	e2fsprogs/contrib/android/basefs_allocator.c
 @@ -140,6 +141,7 @@ target_link_libraries(e2fsdroid
  target_include_directories(e2fsdroid PRIVATE
-        e2fsprogs/lib e2fsprogs/lib/ext2fs selinux/libselinux/include
-        core/libcutils/include e2fsprogs/misc)
+ 	e2fsprogs/lib e2fsprogs/lib/ext2fs selinux/libselinux/include
+ 	core/libcutils/include e2fsprogs/misc)
 +endif()
  
  add_executable(ext2simg
-        e2fsprogs/contrib/android/ext2simg.c)
+ 	e2fsprogs/contrib/android/ext2simg.c)
 diff --git a/vendor/CMakeLists.txt b/vendor/CMakeLists.txt
 index 0ea7a01..a29da55 100644
 --- a/vendor/CMakeLists.txt
 +++ b/vendor/CMakeLists.txt
 @@ -108,10 +108,13 @@ install(TARGETS
-        lpmake
-        lpunpack
-        simg2img
--       e2fsdroid
-        ext2simg
-        DESTINATION bin)
+ 	lpmake
+ 	lpunpack
+ 	simg2img
+-	e2fsdroid
+ 	ext2simg
+ 	DESTINATION bin)
  
 +if( NOT CMAKE_SYSTEM_PROCESSOR MATCHES "ppc64le" )
 +install(TARGETS "${ANDROID_MKE2FS_NAME}" e2fsdroid DESTINATION bin)
