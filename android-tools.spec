@@ -104,9 +104,6 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 %{_bindir}/img2simg
 %{_bindir}/fastboot
 %{_bindir}/append2simg
-%ifnarch ppc64le
-%{_bindir}/e2fsdroid
-%endif
 %{_bindir}/ext2simg
 %{_bindir}/lpadd
 %{_bindir}/lpdump
