@@ -14,6 +14,9 @@ URL:           http://developer.android.com/guide/developing/tools/
 Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
 Source1:       51-android.rules
 Source2:       adb.service
+# Fix includes
+# https://github.com/nmeum/android-tools/commit/289759dfb6017c8f1ec1767d8922a7300c54ef05
+Patch1:        android-tools-include.patch
 
 BuildRequires: brotli-devel
 BuildRequires: cmake
@@ -67,7 +70,7 @@ to read and write the flash partitions. It needs the same USB device
 setup between the host and the target phone as adb.
 
 %prep
-%setup -q
+%autosetup -p1
 cp -p %{SOURCE1} 51-android.rules
 
 %build
