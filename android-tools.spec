@@ -1,7 +1,7 @@
 %global _hardened_build 1
 
 Name:          android-tools
-Version:       34.0.4
+Version:       35.0.1
 Release:       %autorelease
 Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
@@ -14,9 +14,6 @@ URL:           http://developer.android.com/guide/developing/tools/
 Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
 Source1:       51-android.rules
 Source2:       adb.service
-# Fix includes
-# https://github.com/nmeum/android-tools/commit/289759dfb6017c8f1ec1767d8922a7300c54ef05
-Patch1:        android-tools-include.patch
 
 BuildRequires: brotli-devel
 BuildRequires: cmake
@@ -114,9 +111,11 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 %{_bindir}/lpflash
 %{_bindir}/lpmake
 %{_bindir}/lpunpack
+%{_bindir}/make_f2fs
 %{_bindir}/mkbootimg
 %{_bindir}/mkdtboimg
 %{_bindir}/repack_bootimg
+%{_bindir}/sload_f2fs
 %{_bindir}/unpack_bootimg
 %{_datadir}/android-tools/completions/adb
 %{_datadir}/android-tools/completions/fastboot
