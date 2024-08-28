@@ -7,7 +7,8 @@ Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
 
 # The entire source code is ASL 2.0 except boringssl which is BSD
-License:       ASL 2.0 and (ASL 2.0 and BSD)
+# Automatically converted from old format: ASL 2.0 and (ASL 2.0 and BSD) - review is highly recommended.
+License:       Apache-2.0 AND (Apache-2.0 AND LicenseRef-Callaway-BSD)
 URL:           http://developer.android.com/guide/developing/tools/
 
 #  Sources with all needed patches and cmakelists live there now: 
