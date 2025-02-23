@@ -1,7 +1,7 @@
 %global _hardened_build 1
 
 Name:          android-tools
-Version:       35.0.1
+Version:       35.0.2
 Release:       %autorelease
 Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
@@ -15,9 +15,14 @@ URL:           http://developer.android.com/guide/developing/tools/
 Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
 Source1:       51-android.rules
 Source2:       adb.service
+# https://github.com/nmeum/android-tools/issues/153
+Patch0:        0001-Fix-libusb-enumeration.patch
+# https://github.com/libusb/libusb/pull/1428, https://github.com/libusb/libusb/pull/1477
+Patch1:        0001-Disable-libusb-SuperSpeed-support.patch
 
 BuildRequires: brotli-devel
 BuildRequires: cmake
+BuildRequires: fmt-devel
 BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: gtest-devel
@@ -124,6 +129,7 @@ install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 %{_datadir}/android-tools/mkbootimg/mkbootimg.py
 %{_datadir}/bash-completion/completions/adb
 %{_datadir}/bash-completion/completions/fastboot
+%{_mandir}/man1/adb.1.*
 
 %changelog
 %autochangelog
