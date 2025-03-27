@@ -17,8 +17,6 @@ Source1:       51-android.rules
 Source2:       adb.service
 # https://github.com/nmeum/android-tools/issues/153
 Patch0:        0001-Fix-libusb-enumeration.patch
-# https://github.com/libusb/libusb/pull/1428, https://github.com/libusb/libusb/pull/1477
-Patch1:        0001-Disable-libusb-SuperSpeed-support.patch
 
 BuildRequires: brotli-devel
 BuildRequires: cmake
