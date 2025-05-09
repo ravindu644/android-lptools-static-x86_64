@@ -13,8 +13,6 @@ URL:           http://developer.android.com/guide/developing/tools/
 
 #  Sources with all needed patches and cmakelists live there now: 
 Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
-Source1:       51-android.rules
-Source2:       adb.service
 # https://github.com/nmeum/android-tools/issues/153
 Patch0:        0001-Fix-libusb-enumeration.patch
 
@@ -72,7 +70,6 @@ setup between the host and the target phone as adb.
 
 %prep
 %autosetup -p1
-cp -p %{SOURCE1} 51-android.rules
 
 %build
 export GO111MODULE=off
@@ -81,24 +78,8 @@ export GO111MODULE=off
 
 %install
 %cmake_install
-install -p -D -m 0644 %{SOURCE2} \
-    %{buildroot}%{_unitdir}/adb.service
-install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
-
-%post
-%systemd_post adb.service
-
-%preun
-%systemd_preun adb.service
-
-%postun
-%systemd_postun_with_restart adb.service
 
 %files
-%doc 51-android.rules
-%{_unitdir}/adb.service
-%attr(0755,root,root) %dir %{_sharedstatedir}/adb
-%attr(0755,root,root) %dir %{_datadir}/android-tools
 #ASL2.0 and BSD
 %{_bindir}/adb
 #ASL2.0
