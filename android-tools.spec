@@ -1,5 +1,3 @@
-%global _hardened_build 1
-
 Name:          android-tools
 Version:       35.0.2
 Release:       %autorelease
