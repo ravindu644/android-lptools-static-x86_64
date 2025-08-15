@@ -1,6 +1,6 @@
 Name:          android-tools
 Version:       35.0.2
-Release:       %autorelease
+Release:       %autorelease.1
 Epoch:         1
 Summary:       Android platform tools(adb, fastboot)
 
@@ -109,4 +109,7 @@ export GO111MODULE=off
 %{_mandir}/man1/adb.1.*
 
 %changelog
+* Fri Aug 15 2025 Maxwell G <maxwell@gtmx.me> - 1:35.0.2-1.1
+- Rebuild for golang-1.25.0
+
 %autochangelog
