@@ -13,6 +13,8 @@ URL:           http://developer.android.com/guide/developing/tools/
 Source0:       https://github.com/nmeum/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
 # https://github.com/nmeum/android-tools/issues/153
 Patch0:        0001-Fix-libusb-enumeration.patch
+# https://github.com/nmeum/android-tools/pull/172
+Patch1:        0002-extras-libjsonpb-Fix-incompatibility-with-protobuf-v30.patch
 
 BuildRequires: brotli-devel
 BuildRequires: cmake
